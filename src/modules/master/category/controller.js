@@ -80,8 +80,11 @@ class Controller {
     const { id } = req.params;
     try {
       const data = await MasterCategory.findByPk(id);
-      if (!data)
-        return res.status(404).json({ message: "Master category not found!" });
+      if (!data) {
+        const err = new Error("Master category not found");
+        err.code = HttpStatusCode.BadRequest;
+        throw err;
+      }
 
       await data.destroy();
       res
