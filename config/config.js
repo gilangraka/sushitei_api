@@ -25,13 +25,13 @@ module.exports = {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: process.env.DB_CONNECTION,
-    dialectOptions: {
-      ssl: {
-        require: toBoolean(process.env.DB_SSL),
-        rejectUnauthorized: false,
-      },
-      bigNumberStrings: true,
-    },
+    // dialectOptions: {
+    //   ssl: {
+    //     require: toBoolean(process.env.DB_SSL),
+    //     rejectUnauthorized: false,
+    //   },
+    //   bigNumberStrings: true,
+    // },
   },
   staging: {
     username: process.env.DB_USER,
