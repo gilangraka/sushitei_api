@@ -1,5 +1,22 @@
 const { checkSchema } = require("express-validator");
 
+exports.indexSchema = checkSchema({
+  per_page: {
+    optional: {
+      nullable: true,
+    },
+    isNumeric: true,
+    errorMessage: "Per page must be numeric",
+  },
+  page: {
+    optional: {
+      nullable: true,
+    },
+    isNumeric: true,
+    errorMessage: "Page must be numeric",
+  },
+});
+
 exports.storeSchema = checkSchema({
   code: {
     notEmpty: true,
@@ -35,32 +52,5 @@ exports.updateSchema = checkSchema({
     isString: {
       errorMessage: "Code must be a string",
     },
-  },
-});
-
-exports.allSchema = checkSchema({
-  limit: {
-    optional: {
-      nullable: true,
-    },
-    isNumeric: true,
-    errorMessage: "limit must be numeric",
-  },
-});
-
-exports.listSchema = checkSchema({
-  per_page: {
-    optional: {
-      nullable: true,
-    },
-    isNumeric: true,
-    errorMessage: "Per page must be numeric",
-  },
-  page: {
-    optional: {
-      nullable: true,
-    },
-    isNumeric: true,
-    errorMessage: "Page must be numeric",
   },
 });
