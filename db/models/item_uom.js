@@ -1,6 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 const m_uom = require("./m_uom");
+const { m_item } = require(".");
 module.exports = (sequelize, DataTypes) => {
   class item_uom extends Model {
     /**

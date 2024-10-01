@@ -40,6 +40,20 @@ class Controller {
     }
   }
 
+  static async store(req, res) {
+    const { name } = req.body;
+    try {
+      const data = await MasterItemGroup.create({ name });
+      return res
+        .status(HttpStatusCode.Ok)
+        .json(api.results(data, HttpStatusCode.Ok));
+    } catch (error) {
+      return res
+        .status(HttpStatusCode.InternalServerError)
+        .json(api.results(null, HttpStatusCode.InternalServerError, error));
+    }
+  }
+
   static async update(req, res) {
     const { id } = req.params;
     try {
