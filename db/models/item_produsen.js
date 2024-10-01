@@ -1,8 +1,9 @@
 "use strict";
 const { Model } = require("sequelize");
-
+const m_item = require("./m_item");
+const m_produsen = require("./m_produsen");
 module.exports = (sequelize, DataTypes) => {
-  class m_uom extends Model {
+  class item_produsen extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -10,29 +11,33 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      m_uom.belongsToMany(models.m_item, {
-        through: models.item_uom,
-      });
     }
   }
-  m_uom.init(
+  item_produsen.init(
     {
       id: {
         type: DataTypes.UUID,
         primaryKey: true,
       },
-      name: {
-        type: DataTypes.STRING,
-        unique: true,
+      item_id: {
+        type: DataTypes.UUID,
+        references: {
+          model: m_item,
+          key: "id",
+        },
       },
-      description: DataTypes.STRING,
-      status: DataTypes.ENUM("active", "inactive"),
+      produsen_id: {
+        type: DataTypes.UUID,
+        references: {
+          model: m_produsen,
+          key: "id",
+        },
+      },
     },
     {
       sequelize,
-      modelName: "m_uom",
-      paranoid: true,
+      modelName: "item_produsen",
     }
   );
-  return m_uom;
+  return item_produsen;
 };

@@ -45,6 +45,12 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
         onDelete: "SET NULL",
       });
+      m_item.belongsToMany(models.m_produsen, {
+        through: models.item_produsen,
+      });
+      m_item.belongsToMany(models.m_uom, {
+        through: models.item_uom,
+      });
     }
   }
   m_item.init(
