@@ -24,6 +24,10 @@ exports.storeSchema = checkSchema({
     isString: {
       errorMessage: "Name must be a string",
     },
+    isLength: {
+      options: { max: 3 },
+      errorMessage: "Code maximum length is 3",
+    },
   },
 });
 
@@ -31,6 +35,10 @@ exports.updateSchema = checkSchema({
   name: {
     isString: {
       errorMessage: "Name must be a string",
+    },
+    isLength: {
+      options: { max: 3 },
+      errorMessage: "Code maximum length is 3",
     },
   },
 });
