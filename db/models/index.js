@@ -51,5 +51,10 @@ db.Sequelize = Sequelize;
 db.m_category = require("./m_category")(sequelize, Sequelize);
 db.m_item_group = require("./m_item_group")(sequelize, Sequelize);
 db.m_country = require("./m_country")(sequelize, Sequelize);
+db.m_uom = require("./m_uom")(sequelize, Sequelize);
+db.m_produsen = require("./m_produsen")(sequelize, Sequelize);
+db.m_item = require("./m_item")(sequelize, Sequelize);
+db.item_uom = require("./item_uom")(sequelize, Sequelize);
+db.item_produsen = require("./item_produsen")(sequelize, Sequelize);
 
 module.exports = db;

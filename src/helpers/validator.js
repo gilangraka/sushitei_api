@@ -1,6 +1,5 @@
 const { validationResult } = require("express-validator");
 const api = require("./api");
-require("./");
 const { HttpStatusCode } = require("axios");
 
 function validated(schemas) {
