@@ -22,7 +22,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "m_item_group",
-      timestamps: true,
       paranoid: true,
     }
   );

@@ -18,7 +18,6 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "m_country",
-      timestamps: true,
       paranoid: true,
     }
   );
