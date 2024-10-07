@@ -1,6 +1,8 @@
+const { HttpStatusCode } = require('axios')
 const db = require('../../../../db/models');
-const { Op } = require('sequelize');
 const produsen = db.m_produsen;
+const api = require('../../../helpers/api')
+const { Op } = require('sequelize');
 
 class Controller {
   static async list(req, res) {
@@ -31,9 +33,15 @@ class Controller {
         order: [['createdAt', 'DESC']],
       });
 
-      res.status(200).json({ results, total: results.count });
+      res
+        .status(HttpStatusCode.Ok)
+        .json(api.results(results, HttpStatusCode.Ok, { req: req }))
     } catch (err) {
-      res.status(500).json({ error: "Internal Server Error", details: err.message });
+      err.code =
+        typeof err.code !== 'undefined' && err.code !== null
+          ? err.code
+          : HttpStatusCode.InternalServerError
+      res.status(err.code).json(api.results(null, err.code, { err: err }))
     }
   }
 
@@ -45,12 +53,20 @@ class Controller {
       });
 
       if (!produsenItem) {
-        return res.status(404).json({ error: "Produsen not found" });
+        const err = new Error("Master produsen not found");
+        err.code = HttpStatusCode.BadRequest;
+        throw err;
       }
 
-      res.status(200).json(produsenItem);
+      res
+        .status(HttpStatusCode.Ok)
+        .json(api.results(produsenItem, HttpStatusCode.Ok))
     } catch (err) {
-      res.status(500).json({ error: "Internal Server Error", details: err.message });
+      err.code =
+        typeof err.code !== 'undefined' && err.code !== null
+          ? err.code
+          : HttpStatusCode.InternalServerError
+      res.status(err.code).json(api.results(null, err.code, { err: err }))
     }
   }
 
@@ -64,9 +80,15 @@ class Controller {
         description,
         status,
       });
-      res.status(201).json({ message: "Create Produsen Success.", newProdusen });
+      res
+        .status(HttpStatusCode.Ok)
+        .json(api.results(newProdusen, HttpStatusCode.Ok))
     } catch (err) {
-      res.status(500).json({ error: "Internal Server Error", details: err.message });
+      err.code =
+        typeof err.code !== 'undefined' && err.code !== null
+          ? err.code
+          : HttpStatusCode.InternalServerError
+      res.status(err.code).json(api.results(null, err.code, { err: err }))
     }
   }
 
@@ -77,13 +99,23 @@ class Controller {
       const produsenItem = await produsen.findByPk(id);
 
       if (!produsenItem) {
-        return res.status(404).json({ error: "Produsen not found" });
+        const err = new Error("Master produsen not found");
+        err.code = HttpStatusCode.BadRequest;
+        throw err;
       }
 
       const updatedProdusen = await produsenItem.update(produsenData);
-      res.status(200).json({ message: "Edit The Produsen Success.", updatedProdusen });
+
+      const results = updatedProdusen ? "Produsen Success Updated" : "Produsen Failed Updated"
+      res
+        .status(HttpStatusCode.Ok)
+        .json(api.results(results, HttpStatusCode.Ok))
     } catch (err) {
-      res.status(500).json({ error: "Internal Server Error", details: err.message });
+      err.code =
+        typeof err.code !== 'undefined' && err.code !== null
+          ? err.code
+          : HttpStatusCode.InternalServerError
+      res.status(err.code).json(api.results(null, err.code, { err: err }))
     }
   }
 
@@ -93,13 +125,21 @@ class Controller {
       const produsenItem = await produsen.findByPk(id);
 
       if (!produsenItem) {
-        return res.status(404).json({ error: "Produsen not found" });
+        const err = new Error("Master produsen not found");
+        err.code = HttpStatusCode.BadRequest;
+        throw err;
       }
 
       await produsenItem.destroy();
-      res.status(200).json({ message: "Delete Produsen Success." });
+      res
+        .status(HttpStatusCode.Ok)
+        .json({ message: "Delete master produsen success" });
     } catch (err) {
-      res.status(500).json({ error: "Internal Server Error", details: err.message });
+      err.code =
+        typeof err.code !== 'undefined' && err.code !== null
+          ? err.code
+          : HttpStatusCode.InternalServerError
+      res.status(err.code).json(api.results(null, err.code, { err: err }))
     }
   }
 }

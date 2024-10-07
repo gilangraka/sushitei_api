@@ -1,6 +1,8 @@
+const { HttpStatusCode } = require('axios')
 const db = require('../../../../db/models');
-const { Op } = require('sequelize');
 const uom = db.m_uom;
+const api = require('../../../helpers/api')
+const { Op } = require('sequelize');
 
 class Controller {
   static async list(req, res) {
@@ -23,9 +25,15 @@ class Controller {
         order: [['createdAt', 'DESC']],
       });
 
-      res.status(200).json({ results, total: results.count });
+      res
+        .status(HttpStatusCode.Ok)
+        .json(api.results(results, HttpStatusCode.Ok, { req: req }))
     } catch (err) {
-      res.status(500).json({ error: "Internal Server Error", details: err.message });
+      err.code =
+        typeof err.code !== 'undefined' && err.code !== null
+          ? err.code
+          : HttpStatusCode.InternalServerError
+      res.status(err.code).json(api.results(null, err.code, { err: err }))
     }
   }
 
@@ -35,12 +43,20 @@ class Controller {
       const uomItem = await uom.findByPk(id, { where: { deletedAt: null } });
 
       if (!uomItem) {
-        return res.status(404).json({ error: "UOM not found" });
+        const err = new Error("Master UOM not found");
+        err.code = HttpStatusCode.BadRequest;
+        throw err;
       }
 
-      res.status(200).json(uomItem);
+      res
+        .status(HttpStatusCode.Ok)
+        .json(api.results(uomItem, HttpStatusCode.Ok))
     } catch (err) {
-      res.status(500).json({ error: "Internal Server Error", details: err.message });
+      err.code =
+        typeof err.code !== 'undefined' && err.code !== null
+          ? err.code
+          : HttpStatusCode.InternalServerError
+      res.status(err.code).json(api.results(null, err.code, { err: err }))
     }
   }
 
@@ -53,7 +69,9 @@ class Controller {
       });
 
       if(checkUOM) {
-        return res.status(400).json({ error: "UOM name already exists." });
+        const err = new Error("Master UOM name already exist");
+        err.code = HttpStatusCode.BadRequest;
+        throw err;
       }
 
       const newUOM = await uom.create({ 
@@ -61,9 +79,15 @@ class Controller {
         description, 
         status 
       });
-      res.status(201).json({ message: "Create UOM Success.", newUOM });
+      res
+        .status(HttpStatusCode.Ok)
+        .json(api.results(newUOM, HttpStatusCode.Ok))
     } catch (err) {
-      res.status(500).json({ error: "Internal Server Error", details: err.message });
+      err.code =
+        typeof err.code !== 'undefined' && err.code !== null
+          ? err.code
+          : HttpStatusCode.InternalServerError
+      res.status(err.code).json(api.results(null, err.code, { err: err }))
     }
   }
 
@@ -74,13 +98,23 @@ class Controller {
       const uomItem = await uom.findByPk(id);
 
       if (!uomItem) {
-        return res.status(404).json({ error: "UOM not found" });
+        const err = new Error("Master UOM not found");
+        err.code = HttpStatusCode.BadRequest;
+        throw err;
       }
 
       const updatedUOM = await uomItem.update(uomData);
-      res.status(200).json({ message: "Edit The UOM Success.", updatedUOM });
+
+      const results = updatedUOM ? "Produsen Success Updated" : "Produsen Failed Updated"
+      res
+        .status(HttpStatusCode.Ok)
+        .json(api.results(results, HttpStatusCode.Ok))
     } catch (err) {
-      res.status(500).json({ error: "Internal Server Error", details: err.message });
+      err.code =
+        typeof err.code !== 'undefined' && err.code !== null
+          ? err.code
+          : HttpStatusCode.InternalServerError
+      res.status(err.code).json(api.results(null, err.code, { err: err }))
     }
   }
 
@@ -90,13 +124,21 @@ class Controller {
       const uomItem = await uom.findByPk(id);
 
       if (!uomItem) {
-        return res.status(404).json({ error: "UOM not found" });
+        const err = new Error("Master UOM not found");
+        err.code = HttpStatusCode.BadRequest;
+        throw err;
       }
 
       await uomItem.destroy();
-      res.status(200).json({ message: "Delete UOM Success." });
+      res
+        .status(HttpStatusCode.Ok)
+        .json({ message: "Delete master produsen success" });
     } catch (err) {
-      res.status(500).json({ error: "Internal Server Error", details: err.message });
+      err.code =
+        typeof err.code !== 'undefined' && err.code !== null
+          ? err.code
+          : HttpStatusCode.InternalServerError
+      res.status(err.code).json(api.results(null, err.code, { err: err }))
     }
   }
 }
