@@ -19,26 +19,31 @@ exports.indexSchema = checkSchema({
 
 exports.storeSchema = checkSchema({
   name: {
-    notEmpty: true,
-    errorMessage: "Name is required",
+    notEmpty: {
+      errorMessage: "Name is required",
+    },
     isString: {
       errorMessage: "Name must be a string",
     },
     isLength: {
-      options: { max: 3 },
-      errorMessage: "Code maximum length is 3",
+      options: { max: 50 },
+      errorMessage: "Name maximum length is 50",
     },
   },
 });
 
 exports.updateSchema = checkSchema({
   name: {
+    optional: true,
+    notEmpty: {
+      errorMessage: "Name cannot be empty",
+    },
     isString: {
       errorMessage: "Name must be a string",
     },
     isLength: {
-      options: { max: 3 },
-      errorMessage: "Code maximum length is 3",
+      options: { max: 50 },
+      errorMessage: "Name maximum length is 50",
     },
   },
 });

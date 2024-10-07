@@ -1,6 +1,7 @@
 const { HttpStatusCode } = require("axios");
 const api = require("../../../helpers/api");
 const db = require("../../../../db/models");
+const { Op } = require("sequelize");
 const MasterItemGroup = db.m_item_group;
 
 class Controller {
@@ -8,16 +9,23 @@ class Controller {
     const limit = parseInt(req.query.per_page, 10) || 10;
     const page = parseInt(req.query.page, 10) || 1;
     const offset = (page - 1) * limit;
+    const searchData = req.query.search || "";
+
     try {
       const data = await MasterItemGroup.findAll({
         limit,
         offset,
+        where: {
+          [Op.or]: [{ name: { [Op.iLike]: `%${searchData}%` } }],
+        },
+        order: [["createdAt", "DESC"]],
       });
       res.status(HttpStatusCode.Ok).json(api.results(data, HttpStatusCode.Ok));
-    } catch (error) {
+    } catch (err) {
+      const statusCode = err.code || HttpStatusCode.InternalServerError;
       return res
-        .status(HttpStatusCode.InternalServerError)
-        .json(api.results(null, HttpStatusCode.InternalServerError, error));
+        .status(statusCode)
+        .json(api.results(null, statusCode, { err }));
     }
   }
 
@@ -26,17 +34,18 @@ class Controller {
     try {
       const data = await MasterItemGroup.findByPk(id);
       if (!data) {
-        const err = new Error("Master item group not found");
-        err.code = HttpStatusCode.BadRequest;
-        throw err;
+        const error = new Error("Master item group not found");
+        error.code = HttpStatusCode.BadRequest;
+        throw error;
       }
       return res
         .status(HttpStatusCode.Ok)
         .json(api.results(data, HttpStatusCode.Ok));
-    } catch (error) {
+    } catch (err) {
+      const statusCode = err.code || HttpStatusCode.InternalServerError;
       return res
-        .status(HttpStatusCode.InternalServerError)
-        .json(api.results(null, HttpStatusCode.InternalServerError, error));
+        .status(statusCode)
+        .json(api.results(null, statusCode, { err }));
     }
   }
 
@@ -48,9 +57,10 @@ class Controller {
         .status(HttpStatusCode.Ok)
         .json(api.results(data, HttpStatusCode.Ok));
     } catch (error) {
+      const statusCode = err.code || HttpStatusCode.InternalServerError;
       return res
-        .status(HttpStatusCode.InternalServerError)
-        .json(api.results(null, HttpStatusCode.InternalServerError, error));
+        .status(statusCode)
+        .json(api.results(null, statusCode, { err }));
     }
   }
 
@@ -59,19 +69,20 @@ class Controller {
     try {
       const data = await MasterItemGroup.findByPk(id);
       if (!data) {
-        const err = new Error("Master item group not found");
-        err.code = HttpStatusCode.BadRequest;
-        throw err;
+        const error = new Error("Master item group not found");
+        error.code = HttpStatusCode.BadRequest;
+        throw error;
       }
 
       await data.update(req.body);
       return res
         .status(HttpStatusCode.Ok)
         .json(api.results(data, HttpStatusCode.Ok));
-    } catch (error) {
+    } catch (err) {
+      const statusCode = err.code || HttpStatusCode.InternalServerError;
       return res
-        .status(HttpStatusCode.InternalServerError)
-        .json(api.results(null, HttpStatusCode.InternalServerError, error));
+        .status(statusCode)
+        .json(api.results(null, statusCode, { err }));
     }
   }
 
@@ -80,19 +91,20 @@ class Controller {
     try {
       const data = await MasterItemGroup.findByPk(id);
       if (!data) {
-        const err = new Error("Master item group not found");
-        err.code = HttpStatusCode.BadRequest;
-        throw err;
+        const error = new Error("Master item group not found");
+        error.code = HttpStatusCode.BadRequest;
+        throw error;
       }
 
       await data.destroy();
       return res
         .status(HttpStatusCode.Ok)
         .json(api.results(null, HttpStatusCode.Ok));
-    } catch (error) {
+    } catch (err) {
+      const statusCode = err.code || HttpStatusCode.InternalServerError;
       return res
-        .status(HttpStatusCode.InternalServerError)
-        .json(api.results(null, HttpStatusCode.InternalServerError, error));
+        .status(statusCode)
+        .json(api.results(null, statusCode, { err }));
     }
   }
 }

@@ -34,6 +34,9 @@ exports.storeSchema = checkSchema({
 exports.updateSchema = checkSchema({
   name: {
     optional: true,
+    notEmpty: {
+      errorMessage: "Name cannot be empty",
+    },
     isString: {
       errorMessage: "Name must be a string",
     },

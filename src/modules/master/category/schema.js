@@ -38,20 +38,28 @@ exports.storeSchema = checkSchema({
   },
   description: {
     notEmpty: true,
-    errorMessage: "Code is required",
+    errorMessage: "Description is required",
     isString: {
-      errorMessage: "Code must be a string",
+      errorMessage: "Description must be a string",
     },
   },
 });
 
 exports.updateSchema = checkSchema({
   name: {
+    optional: true,
+    notEmpty: {
+      errorMessage: "Name cannot be empty",
+    },
     isString: {
       errorMessage: "Name must be a string",
     },
   },
   code: {
+    optional: true,
+    notEmpty: {
+      errorMessage: "Code cannot be empty",
+    },
     isString: {
       errorMessage: "Code must be a string",
     },
@@ -61,8 +69,12 @@ exports.updateSchema = checkSchema({
     },
   },
   description: {
+    optional: true,
+    notEmpty: {
+      errorMessage: "Description cannot be empty",
+    },
     isString: {
-      errorMessage: "Code must be a string",
+      errorMessage: "Description must be a string",
     },
   },
 });
