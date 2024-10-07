@@ -1,6 +1,7 @@
 const { HttpStatusCode } = require("axios");
 const api = require("../../../helpers/api");
 const db = require("../../../../db/models");
+const { Op } = require("sequelize");
 const MasterCountry = db.m_country;
 
 class Controller {
@@ -8,16 +9,24 @@ class Controller {
     const limit = parseInt(req.query.per_page, 10) || 10;
     const page = parseInt(req.query.page, 10) || 1;
     const offset = (page - 1) * limit;
+    const searchData = req.query.search || "";
+
     try {
       const data = await MasterCountry.findAll({
         limit,
         offset,
+        where: {
+          [Op.or]: [{ name: { [Op.iLike]: `%${searchData}%` } }],
+        },
+        order: [["createdAt", "DESC"]],
       });
+
       res.status(HttpStatusCode.Ok).json(api.results(data, HttpStatusCode.Ok));
     } catch (error) {
+      const statusCode = error.code || HttpStatusCode.InternalServerError;
       return res
-        .status(HttpStatusCode.InternalServerError)
-        .json(api.results(null, HttpStatusCode.InternalServerError, error));
+        .status(statusCode)
+        .json(api.results(null, statusCode, error.message || error));
     }
   }
 
@@ -26,17 +35,17 @@ class Controller {
     try {
       const data = await MasterCountry.findByPk(id);
       if (!data) {
-        const err = new Error("Master country not found");
+        const err = new Error("Country not found");
         err.code = HttpStatusCode.BadRequest;
-
         throw err;
       }
 
       res.status(HttpStatusCode.Ok).json(api.results(data, HttpStatusCode.Ok));
     } catch (error) {
+      const statusCode = error.code || HttpStatusCode.InternalServerError;
       return res
-        .status(HttpStatusCode.InternalServerError)
-        .json(api.results(null, HttpStatusCode.InternalServerError, error));
+        .status(statusCode)
+        .json(api.results(null, statusCode, error.message || error));
     }
   }
 
@@ -62,16 +71,15 @@ class Controller {
       if (!data) {
         const err = new Error("Master country not found");
         err.code = HttpStatusCode.BadRequest;
-
         throw err;
       }
-
       await data.update(req.body);
       res.status(HttpStatusCode.Ok).json(api.results(data, HttpStatusCode.Ok));
     } catch (error) {
+      const statusCode = error.code || HttpStatusCode.InternalServerError;
       return res
-        .status(HttpStatusCode.InternalServerError)
-        .json(api.results(null, HttpStatusCode.InternalServerError, error));
+        .status(statusCode)
+        .json(api.results(null, statusCode, error.message || error));
     }
   }
 

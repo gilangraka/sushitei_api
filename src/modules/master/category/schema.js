@@ -18,6 +18,13 @@ exports.indexSchema = checkSchema({
 });
 
 exports.storeSchema = checkSchema({
+  name: {
+    notEmpty: true,
+    errorMessage: "Name is required",
+    isString: {
+      errorMessage: "Name must be a string",
+    },
+  },
   code: {
     notEmpty: true,
     errorMessage: "Code is required",
@@ -39,6 +46,11 @@ exports.storeSchema = checkSchema({
 });
 
 exports.updateSchema = checkSchema({
+  name: {
+    isString: {
+      errorMessage: "Name must be a string",
+    },
+  },
   code: {
     isString: {
       errorMessage: "Code must be a string",

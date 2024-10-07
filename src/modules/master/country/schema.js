@@ -33,6 +33,7 @@ exports.storeSchema = checkSchema({
 
 exports.updateSchema = checkSchema({
   name: {
+    optional: true,
     isString: {
       errorMessage: "Name must be a string",
     },

@@ -1,5 +1,5 @@
-const db = require('../../../../db/models');
-const { Op } = require('sequelize');
+const db = require("../../../../db/models");
+const { Op } = require("sequelize");
 const uom = db.m_uom;
 
 class Controller {
@@ -20,12 +20,14 @@ class Controller {
           ],
           deletedAt: null,
         },
-        order: [['createdAt', 'DESC']],
+        order: [["createdAt", "DESC"]],
       });
 
       res.status(200).json({ results, total: results.count });
     } catch (err) {
-      res.status(500).json({ error: "Internal Server Error", details: err.message });
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
     }
   }
 
@@ -40,7 +42,9 @@ class Controller {
 
       res.status(200).json(uomItem);
     } catch (err) {
-      res.status(500).json({ error: "Internal Server Error", details: err.message });
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
     }
   }
 
@@ -49,21 +53,23 @@ class Controller {
       const { name, description, status } = req.body;
 
       const checkUOM = await uom.findOne({
-        where: { name: name }
+        where: { name: name },
       });
 
-      if(checkUOM) {
+      if (checkUOM) {
         return res.status(400).json({ error: "UOM name already exists." });
       }
 
-      const newUOM = await uom.create({ 
-        name, 
-        description, 
-        status 
+      const newUOM = await uom.create({
+        name,
+        description,
+        status,
       });
       res.status(201).json({ message: "Create UOM Success.", newUOM });
     } catch (err) {
-      res.status(500).json({ error: "Internal Server Error", details: err.message });
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
     }
   }
 
@@ -80,7 +86,9 @@ class Controller {
       const updatedUOM = await uomItem.update(uomData);
       res.status(200).json({ message: "Edit The UOM Success.", updatedUOM });
     } catch (err) {
-      res.status(500).json({ error: "Internal Server Error", details: err.message });
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
     }
   }
 
@@ -96,7 +104,9 @@ class Controller {
       await uomItem.destroy();
       res.status(200).json({ message: "Delete UOM Success." });
     } catch (err) {
-      res.status(500).json({ error: "Internal Server Error", details: err.message });
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message });
     }
   }
 }
