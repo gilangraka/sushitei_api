@@ -41,9 +41,10 @@ class Controller {
   }
 
   static async store(req, res) {
-    const { code, description } = req.body;
+    const { name, code, description } = req.body;
     try {
       const data = await MasterCategory.create({
+        name,
         code,
         description,
       });

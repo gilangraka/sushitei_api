@@ -22,7 +22,7 @@ class Controller {
           ],
           deletedAt: null,
         },
-        order: [['createdAt', 'DESC']],
+        order: [["createdAt", "DESC"]],
       });
 
       res
@@ -65,7 +65,7 @@ class Controller {
       const { name, description, status } = req.body;
 
       const checkUOM = await uom.findOne({
-        where: { name: name }
+        where: { name: name },
       });
 
       if(checkUOM) {
@@ -74,10 +74,10 @@ class Controller {
         throw err;
       }
 
-      const newUOM = await uom.create({ 
-        name, 
-        description, 
-        status 
+      const newUOM = await uom.create({
+        name,
+        description,
+        status,
       });
       res
         .status(HttpStatusCode.Ok)
