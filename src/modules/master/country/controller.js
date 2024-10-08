@@ -22,11 +22,11 @@ class Controller {
       });
 
       res.status(HttpStatusCode.Ok).json(api.results(data, HttpStatusCode.Ok));
-    } catch (error) {
-      const statusCode = error.code || HttpStatusCode.InternalServerError;
+    } catch (err) {
+      const statusCode = err.code || HttpStatusCode.InternalServerError;
       return res
         .status(statusCode)
-        .json(api.results(null, statusCode, error.message || error));
+        .json(api.results(null, statusCode, { err }));
     }
   }
 
@@ -35,17 +35,17 @@ class Controller {
     try {
       const data = await MasterCountry.findByPk(id);
       if (!data) {
-        const err = new Error("Country not found");
-        err.code = HttpStatusCode.BadRequest;
-        throw err;
+        const error = new Error("Country not found");
+        error.code = HttpStatusCode.BadRequest;
+        throw error;
       }
 
       res.status(HttpStatusCode.Ok).json(api.results(data, HttpStatusCode.Ok));
-    } catch (error) {
-      const statusCode = error.code || HttpStatusCode.InternalServerError;
+    } catch (err) {
+      const statusCode = err.code || HttpStatusCode.InternalServerError;
       return res
         .status(statusCode)
-        .json(api.results(null, statusCode, error.message || error));
+        .json(api.results(null, statusCode, { err }));
     }
   }
 
@@ -57,10 +57,11 @@ class Controller {
       });
 
       res.status(HttpStatusCode.Ok).json(api.results(data, HttpStatusCode.Ok));
-    } catch (error) {
+    } catch (err) {
+      const statusCode = err.code || HttpStatusCode.InternalServerError;
       return res
-        .status(HttpStatusCode.InternalServerError)
-        .json(api.results(null, HttpStatusCode.InternalServerError, error));
+        .status(statusCode)
+        .json(api.results(null, statusCode, { err }));
     }
   }
 
@@ -69,17 +70,17 @@ class Controller {
     try {
       const data = await MasterCountry.findByPk(id);
       if (!data) {
-        const err = new Error("Master country not found");
-        err.code = HttpStatusCode.BadRequest;
-        throw err;
+        const error = new Error("Master country not found");
+        error.code = HttpStatusCode.BadRequest;
+        throw error;
       }
       await data.update(req.body);
       res.status(HttpStatusCode.Ok).json(api.results(data, HttpStatusCode.Ok));
-    } catch (error) {
-      const statusCode = error.code || HttpStatusCode.InternalServerError;
+    } catch (err) {
+      const statusCode = err.code || HttpStatusCode.InternalServerError;
       return res
         .status(statusCode)
-        .json(api.results(null, statusCode, error.message || error));
+        .json(api.results(null, statusCode, { err }));
     }
   }
 
@@ -88,19 +89,20 @@ class Controller {
     try {
       const data = await MasterCountry.findByPk(id);
       if (!data) {
-        const err = new Error("Master category not found");
-        err.code = HttpStatusCode.BadRequest;
-        throw err;
+        const error = new Error("Master country not found");
+        error.code = HttpStatusCode.BadRequest;
+        throw error;
       }
 
       await data.destroy();
       res
         .status(HttpStatusCode.Ok)
-        .json({ message: "Success delete master category" });
-    } catch (error) {
+        .json({ message: "Success delete master country" });
+    } catch (err) {
+      const statusCode = err.code || HttpStatusCode.InternalServerError;
       return res
-        .status(HttpStatusCode.InternalServerError)
-        .json(api.results(null, HttpStatusCode.InternalServerError, error));
+        .status(statusCode)
+        .json(api.results(null, statusCode, { err }));
     }
   }
 }
