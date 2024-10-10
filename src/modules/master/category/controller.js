@@ -12,17 +12,21 @@ class Controller {
     const searchData = req.query.search || "";
 
     try {
-      const data = await MasterCategory.findAll({
+      const data = await MasterCategory.findAndCountAll({
         limit,
         offset,
         where: {
-          [Op.or]: [{ name: { [Op.iLike]: `%${searchData}%` } }],
-          [Op.or]: [{ code: { [Op.iLike]: `%${searchData}%` } }],
-          [Op.or]: [{ description: { [Op.iLike]: `%${searchData}%` } }],
+          [Op.or]: [
+            { name: { [Op.iLike]: `%${searchData}%` } },
+            { code: { [Op.iLike]: `%${searchData}%` } },
+            { description: { [Op.iLike]: `%${searchData}%` } },
+          ],
         },
         order: [["createdAt", "DESC"]],
       });
-      res.status(HttpStatusCode.Ok).json(api.results(data, HttpStatusCode.Ok));
+      res
+        .status(HttpStatusCode.Ok)
+        .json(api.results(data, HttpStatusCode.Ok, { req }));
     } catch (err) {
       const statusCode = err.code || HttpStatusCode.InternalServerError;
       return res

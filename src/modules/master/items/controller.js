@@ -12,7 +12,7 @@ class Controller {
     const searchData = req.query.search || "";
 
     try {
-      const data = await MasterItem.findAll({
+      const data = await MasterItem.findAndCountAll({
         limit,
         offset,
         include: [db.m_produsen, db.m_uom],
@@ -20,7 +20,9 @@ class Controller {
           [Op.or]: [{ name: { [Op.iLike]: `%${searchData}%` } }],
         },
       });
-      res.status(HttpStatusCode.Ok).json(api.results(data, HttpStatusCode.Ok));
+      res
+        .status(HttpStatusCode.Ok)
+        .json(api.results(data, HttpStatusCode.Ok, { req }));
     } catch (err) {
       const statusCode = err.code || HttpStatusCode.InternalServerError;
       return res

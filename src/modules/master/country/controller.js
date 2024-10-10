@@ -12,7 +12,7 @@ class Controller {
     const searchData = req.query.search || "";
 
     try {
-      const data = await MasterCountry.findAll({
+      const data = await MasterCountry.findAndCountAll({
         limit,
         offset,
         where: {
@@ -21,7 +21,9 @@ class Controller {
         order: [["createdAt", "DESC"]],
       });
 
-      res.status(HttpStatusCode.Ok).json(api.results(data, HttpStatusCode.Ok));
+      res
+        .status(HttpStatusCode.Ok)
+        .json(api.results(data, HttpStatusCode.Ok, { req }));
     } catch (err) {
       const statusCode = err.code || HttpStatusCode.InternalServerError;
       return res
