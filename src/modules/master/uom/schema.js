@@ -21,25 +21,22 @@ exports.listSchema = checkSchema({
 
 exports.storeSchema = checkSchema({
   name: {
-    optional: {
-      nullable: true,
-    },
+    notEmpty: true,
+    errorMessage: "Name is required",
     isString: {
       errorMessage: "Name must be a string",
     },
   },
   description: {
-    optional: {
-      nullable: true,
-    },
+    notEmpty: true,
+    errorMessage: "Description is required",
     isString: {
       errorMessage: "Description must be a text",
     },
   },
   status: {
-    optional: {
-      nullable: true,
-    },
+    notEmpty: true,
+    errorMessage: "Status is required",
     isIn: {
       options: [['active', 'inactive']],
       errorMessage: "Status must be either active or inactive",

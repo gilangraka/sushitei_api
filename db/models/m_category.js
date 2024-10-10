@@ -9,6 +9,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      m_category.hasMany(models.warehouse, {
+        foreignKey: 'category_id',
+        as: 'warehouse',
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      })
     }
   }
   m_category.init(
