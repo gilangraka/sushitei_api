@@ -61,7 +61,7 @@ class Controller {
         },
       });
       if (codeExists) {
-        const error = new Error("Code exsists");
+        const error = new Error("Code exists");
         error.code = HttpStatusCode.BadRequest;
         throw error;
       }

@@ -21,25 +21,31 @@ exports.listSchema = checkSchema({
 
 exports.storeSchema = checkSchema({
   name: {
-    optional: {
-      nullable: true,
-    },
+    notEmpty: true,
+    errorMessage: "Name is required",
     isString: {
       errorMessage: "Name must be a string",
     },
   },
-  description: {
-    optional: {
-      nullable: true,
+  address: {
+    notEmpty: true,
+    errorMessage: "Address is required",
+    isLength: {
+      options: { min: 10 },
+      errorMessage: "Address must not be empty",
     },
-    isString: {
-      errorMessage: "Description must be a text",
+  },
+  description: {
+    notEmpty: true,
+    errorMessage: "Description is required",
+    isLength: {
+      options: { min: 10 },
+      errorMessage: "Description must not be empty",
     },
   },
   status: {
-    optional: {
-      nullable: true,
-    },
+    notEmpty: true,
+    errorMessage: "Status is required",
     isIn: {
       options: [['active', 'inactive']],
       errorMessage: "Status must be either active or inactive",
@@ -56,12 +62,22 @@ exports.updatedSchema = checkSchema({
       errorMessage: "Name must be a string",
     },
   },
+  address: {
+    optional: {
+      nullable: true,
+    },
+    isLength: {
+      options: { min: 1 },
+      errorMessage: "Address must not be empty",
+    },
+  },
   description: {
     optional: {
       nullable: true,
     },
-    isString: {
-      errorMessage: "Description must be a text",
+    isLength: {
+      options: { min: 1 },
+      errorMessage: "Description must not be empty",
     },
   },
   status: {
