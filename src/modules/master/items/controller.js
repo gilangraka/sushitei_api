@@ -1,6 +1,7 @@
 const { HttpStatusCode } = require("axios");
 const api = require("../../../helpers/api");
 const db = require("../../../../db/models");
+const { Op } = require("sequelize");
 const MasterItem = db.m_item;
 
 class Controller {
@@ -8,17 +9,23 @@ class Controller {
     const limit = parseInt(req.query.per_page, 10) || 10;
     const page = parseInt(req.query.page, 10) || 1;
     const offset = (page - 1) * limit;
+    const searchData = req.query.search || "";
+
     try {
       const data = await MasterItem.findAll({
         limit,
         offset,
-        include: [db.item_produsen, db.item_uom],
+        include: [db.m_produsen, db.m_uom],
+        where: {
+          [Op.or]: [{ name: { [Op.iLike]: `%${searchData}%` } }],
+        },
       });
       res.status(HttpStatusCode.Ok).json(api.results(data, HttpStatusCode.Ok));
-    } catch (error) {
+    } catch (err) {
+      const statusCode = err.code || HttpStatusCode.InternalServerError;
       return res
-        .status(HttpStatusCode.InternalServerError)
-        .json(api.results(null, HttpStatusCode.InternalServerError, error));
+        .status(statusCode)
+        .json(api.results(null, statusCode, { err }));
     }
   }
 
@@ -26,20 +33,20 @@ class Controller {
     const { id } = req.params;
     try {
       const data = await MasterItem.findByPk(id, {
-        include: [db.item_produsen, db.item_uom],
+        include: [db.m_produsen, db.m_uom],
       });
       if (!data) {
-        const err = new Error("Master item not found");
-        err.code = HttpStatusCode.BadRequest;
-
-        throw err;
+        const error = new Error("Master item not found");
+        error.code = HttpStatusCode.BadRequest;
+        throw error;
       }
 
       res.status(HttpStatusCode.Ok).json(api.results(data, HttpStatusCode.Ok));
-    } catch (error) {
+    } catch (err) {
+      const statusCode = err.code || HttpStatusCode.InternalServerError;
       return res
-        .status(HttpStatusCode.InternalServerError)
-        .json(api.results(null, HttpStatusCode.InternalServerError, error));
+        .status(statusCode)
+        .json(api.results(null, statusCode, { err }));
     }
   }
 
@@ -67,24 +74,27 @@ class Controller {
     } = req.body;
     try {
       if (!Array.isArray(uom_id) || !Array.isArray(produsen_id)) {
-        return res.status(400).send({
-          message:
-            "Data tidak valid. Harap kirimkan item_produsen atau item_uom dalam bentuk array.",
-        });
+        const error = new Error(
+          "Data not valid. Please send item_produsen or item_uom as array"
+        );
+        error.code = HttpStatusCode.BadRequest;
+        throw error;
       }
       const checkSku = db.m_item.findOne({
         where: sku,
       });
       if (checkSku) {
-        return res
-          .status(HttpStatusCode.BadRequest)
-          .json(
-            api.results(null, HttpStatusCode.BadRequest, "SKU sudah digunakan")
-          );
+        const error = new Error("SKU already in use");
+        error.code = HttpStatusCode.BadRequest;
+        throw error;
       }
       const validateExist = async (Model, id, message) => {
         const record = await Model.findByPk(id);
-        if (!record) throw new Error(message);
+        if (!record) {
+          const error = new Error(message);
+          error.code = HttpStatusCode.BadRequest;
+          throw error;
+        }
       };
       await Promise.all([
         validateExist(db.m_category, category_id, "Category not found"),
@@ -146,9 +156,10 @@ class Controller {
         .status(HttpStatusCode.Ok)
         .json(api.results(result, HttpStatusCode.Ok));
     } catch (error) {
+      const statusCode = err.code || HttpStatusCode.InternalServerError;
       return res
-        .status(HttpStatusCode.InternalServerError)
-        .json(api.results(null, HttpStatusCode.InternalServerError, error));
+        .status(statusCode)
+        .json(api.results(null, statusCode, { err }));
     }
   }
 

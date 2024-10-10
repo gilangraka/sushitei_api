@@ -11,7 +11,9 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       m_uom.belongsToMany(models.m_item, {
-        through: models.item_uom,
+        through: "item_uom",
+        foreignKey: "uom_id",
+        otherKey: "item_id",
       });
     }
   }
@@ -20,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       id: {
         type: DataTypes.UUID,
         primaryKey: true,
-        defaultValue: DataTypes.UUIDV4
+        defaultValue: DataTypes.UUIDV4,
       },
       name: {
         type: DataTypes.STRING,

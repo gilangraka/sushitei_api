@@ -46,10 +46,14 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "SET NULL",
       });
       m_item.belongsToMany(models.m_produsen, {
-        through: models.item_produsen,
+        through: "item_produsen",
+        foreignKey: "item_id",
+        otherKey: "produsen_id",
       });
       m_item.belongsToMany(models.m_uom, {
-        through: models.item_uom,
+        through: "item_uom",
+        foreignKey: "item_id",
+        otherKey: "uom_id",
       });
     }
   }
@@ -58,6 +62,7 @@ module.exports = (sequelize, DataTypes) => {
       id: {
         type: DataTypes.UUID,
         primaryKey: true,
+        defaultValue: DataTypes.UUIDV4,
       },
       name: DataTypes.STRING,
       code: DataTypes.STRING,

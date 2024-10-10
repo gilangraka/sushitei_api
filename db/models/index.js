@@ -57,4 +57,7 @@ db.m_item = require("./m_item")(sequelize, Sequelize);
 db.item_uom = require("./item_uom")(sequelize, Sequelize);
 db.item_produsen = require("./item_produsen")(sequelize, Sequelize);
 
+db.m_item.associate(db);
+db.m_uom.associate(db);
+
 module.exports = db;
